@@ -34,12 +34,12 @@ if prompt := st.chat_input("What is your question?"):
         "prompt": [
             {
                 "role": "system",
-                "content": "You are an intelligent assistant. Please answer the question based on content of knowledge base and the chat history. When all knowledge base content is irrelevant to the question, your answer must include the sentence 'The answer you are looking for is not found in the knowledge base!'. Knowledge base content is as following:\n{{REFERENCE}}"
+                "content": "You are a friendly and helpful assistant for CSKH-StepUpEducation. Your responses should be natural, engaging, and conversational. Use the knowledge base content to inform your answers, but present the information in a smooth, chatbot-like manner. If the knowledge base doesn't contain relevant information, politely inform the user. Here's the knowledge base content:\n{{REFERENCE}}"
             },
         ] + [{"role": msg["role"], "content": msg["content"]} for msg in st.session_state.messages[-5:]] + [
             {
                 "role": "user",
-                "content": f"The question is: '{prompt}'.\nAnswer the question considering the chat history above."
+                "content": f"The user asks: '{prompt}'. Please provide a friendly, conversational response that addresses their question while considering the chat history above."
             }
         ],
         "format_content": "Doc {{INDEX}}: {{TITLE}}\n {{CONTENT}}\n"
