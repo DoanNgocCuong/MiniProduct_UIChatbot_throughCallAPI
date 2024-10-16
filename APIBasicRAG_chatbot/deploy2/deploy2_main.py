@@ -20,11 +20,14 @@ if not API_URL or not API_KEY or not LARK_APP_TOKEN or not LARK_TABLE_ID:
     st.error("Missing API or Lark configurations. Please check your environment variables and config file.")
 else:
     # Initialize the backend
-    if 'backend' not in st.session_state:
+    if 'backend' not in st.session_state: # Kiểm tra xem backend đã được khởi tạo chưa
         st.session_state.backend = ChatAssistantBackend(API_URL, API_KEY, LARK_APP_TOKEN, LARK_TABLE_ID)
 
     # Ensure conversation_id is initialized only once per session
+    # Nếu conversation_id không có trong st.session_state thì khởi tạo conversation_id
     if 'conversation_id' not in st.session_state:
+        # Gọi hàm start_new_conversation() để khởi tạo conversation_id
+        # Khi gọi hàm start_new_conversation() thì conversation_id sẽ được khởi tạo và lưu vào st.session_state.conversation_id
         st.session_state.conversation_id = st.session_state.backend.start_new_conversation()
     
     # Display chat history in the frontend

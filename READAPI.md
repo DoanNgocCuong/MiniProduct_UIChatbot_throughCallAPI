@@ -73,9 +73,3 @@ Khi bạn gửi yêu cầu, bạn sẽ nhận được phản hồi với cấu 
 
 ```
 
-
--------
-Khi build UI, bạn ấn: pip install streamlit => Auto được đề xuất tạo .env (cùng với auto cài requirements.txt)
-```bash
-.venv\Scripts\activate
-```

@@ -1,6 +1,6 @@
 import streamlit as st
-from backend import send_request
-from frontend import (
+from deploy1_backend import send_request
+from deploy1_frontend import (
     initialize_chat,
     display_chat_history,
     get_user_input,
