@@ -1,68 +1,58 @@
 # main.py
 
-from APIBasicRAG_chatbot.backend_package.test_ChatAssistant_mongoDB_eachChat import ChatAssistantBackend
-from frontend_package.frontend_v1 import ChatAssistantFrontend
 import streamlit as st
 
+from frontend_package.frontend_v1 import ChatAssistantFrontend
+from backend_package.Threading_ExtendedChatAssistant_class_useCheckTenantAccessToken import ExtendedChatAssistant_Threading
+from backend_package.createRecord_checkTenantAccessToken import create_record_with_checkTenantAccessToken
 import os
-from dotenv import load_dotenv  # Add this import
-load_dotenv()  # Load environment variables from .env file
+import config
 
 
-# Configuration
+# Initialize the Streamlit interface
+frontend = ChatAssistantFrontend()
+
+# Load environment variables for backend configurations
 API_URL = os.getenv('API_URL')
 API_KEY = os.getenv('API_KEY')
-MONGO_URI = os.getenv('MONGO_URI')  # Thay bằng chuỗi kết nối của bạn
+LARK_APP_TOKEN = config.APP_BASE_TOKEN
+LARK_TABLE_ID = config.BASE_TABLE_ID
 
-def main():
-    # Initialize backend and frontend
-    backend = ChatAssistantBackend(API_URL, API_KEY, MONGO_URI)
-    frontend = ChatAssistantFrontend()
+if not API_URL or not API_KEY:
+    st.error("API_URL or API_KEY not found in environment variables")
+elif not LARK_APP_TOKEN or not LARK_TABLE_ID:
+    st.error("Lark configurations not found in environment variables")
+else:
+    # Initialize the extended chat assistant
+    assistant = ExtendedChatAssistant_Threading(
+        API_URL,
+        API_KEY,
+        LARK_APP_TOKEN,
+        LARK_TABLE_ID,
+    )
 
-    # Manage conversation ID
-    if 'conversation_id' not in st.session_state:
-        st.session_state['conversation_id'] = backend.create_conversation()
-
-    conversation_id = st.session_state['conversation_id']
-
-    # Display existing chat history
+    # Display chat history
     frontend.display_chat_history()
 
-    # Get user input
-    prompt = frontend.get_user_input()
+    # Get user input from the frontend
+    user_input = frontend.get_user_input()
 
-    if prompt:
-        # Display user message
-        frontend.display_user_message(prompt)
-        # Update chat history with user message
-        frontend.update_chat_history("user", prompt)
-        # Log the user's message
-        backend.log_message(conversation_id, {"role": "user", "content": prompt})
+    if user_input:
+        # Display the user's input on the frontend
+        frontend.display_user_message(user_input)
 
-        # Prepare data for API request
-        chat_history = frontend.get_chat_history()
-        data = backend.prepare_data(prompt, chat_history)
+        # Get the assistant's response from the backend
+        assistant_response = assistant.chat(user_input)
 
-        # Send API request
-        response = backend.send_request(data)
+        # Display the assistant's response on the frontend
+        frontend.display_assistant_message(assistant_response)
 
-        # Get response content
-        content = backend.get_response_content(response)
+        # Update the chat history
+        frontend.update_chat_history("user", user_input)
+        frontend.update_chat_history("assistant", assistant_response)
 
-        # Display assistant response
-        if response.status_code == 200:
-            frontend.display_assistant_message(content)
-            # Update chat history with assistant message
-            frontend.update_chat_history("assistant", content)
-            # Log the assistant's message
-            backend.log_message(conversation_id, {"role": "assistant", "content": content})
-        else:
-            frontend.display_error_message(content)
-
-    # Option to start a new conversation
-    if st.button('Start New Conversation'):
-        st.session_state['conversation_id'] = backend.create_conversation()
+    # Button to start a new conversation
+    if st.button("Start a New Conversation"):
+        assistant.start_new_conversation()
         frontend.clear_chat_history()
-
-if __name__ == "__main__":
-    main()
+        st.success("New conversation started.")

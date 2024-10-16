@@ -1,7 +1,7 @@
 import requests
 import json
-import get_tenantAccessToken_funct
-
+from .get_tenantAccessToken_funct import get_tenant_access_token
+    
 # Import config
 # Add the parent directory to sys.path để import được config.py
 import os
@@ -53,7 +53,7 @@ def create_record_with_checkTenantAccessToken(app_base_token, base_table_id, fie
             print("Tenant token from storage:", tenant_access_token)  # Log token retrieved from file
     except FileNotFoundError:
         # If the file doesn't exist, generate a new token
-        tenant_access_token = get_tenantAccessToken_funct.get_tenant_access_token()
+        tenant_access_token = get_tenant_access_token()
         print("Generated new tenant_access_token:", tenant_access_token)
 
     # Try to create a record
@@ -63,7 +63,7 @@ def create_record_with_checkTenantAccessToken(app_base_token, base_table_id, fie
         # Check if response indicates an invalid token
         if response.status_code == 401 or (response.json().get("code") == 99991663 or "Invalid access token" in response.json().get("msg", "")):
             print("Invalid access token or token expired, getting a new token...")
-            tenant_access_token = get_tenantAccessToken_funct.get_tenant_access_token()
+            tenant_access_token = get_tenant_access_token()
             print("New tenant_access_token:", tenant_access_token)
             # Try creating the record again with the new token
             response = create_record(app_base_token, base_table_id, tenant_access_token, fields_json)

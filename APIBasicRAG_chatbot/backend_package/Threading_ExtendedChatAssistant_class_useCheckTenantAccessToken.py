@@ -19,8 +19,8 @@ import config  # Now we can import config from the parent directory
 
 # Import ChatAssistant from class 1
 # Assuming your class 1 code is saved in 'chat_assistant.py'
-from ChatAssistant_class import ChatAssistant  # Adjust the import path as needed
-from createRecord_checkTenantAccessToken import create_record_with_checkTenantAccessToken
+from .ChatAssistant_class import ChatAssistant  # Use relative import
+from .createRecord_checkTenantAccessToken import create_record_with_checkTenantAccessToken
 
 import threading  # Import thêm threading
 
