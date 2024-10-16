@@ -12,8 +12,8 @@ import config  # Now we can import config from the parent directory
 
 
 # Define app credentials
-app_DoanNgocCuong_id = config.APP_DOANNGOCCUONG_ID
-app_DoanNgocCuong_secret = config.APP_DOANNGOCCUONG_SECRET
+app_DoanNgocCuong_id = os.getenv("APP_DOANNGOCCUONG_ID")
+app_DoanNgocCuong_secret = os.getenv("APP_DOANNGOCCUONG_SECRET")
 
 def get_tenant_access_token():
     url = "https://open.larksuite.com/open-apis/auth/v3/tenant_access_token/internal"
