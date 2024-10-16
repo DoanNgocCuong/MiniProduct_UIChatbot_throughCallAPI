@@ -31,6 +31,9 @@ else:
         LARK_TABLE_ID,
     )
 
+    # Start a new conversation on page refresh
+    assistant.start_new_conversation()
+
     # Display chat history
     frontend.display_chat_history()
 
@@ -50,9 +53,3 @@ else:
         # Update the chat history
         frontend.update_chat_history("user", user_input)
         frontend.update_chat_history("assistant", assistant_response)
-
-    # Button to start a new conversation
-    if st.button("Start a New Conversation"):
-        assistant.start_new_conversation()
-        frontend.clear_chat_history()
-        st.success("New conversation started.")
