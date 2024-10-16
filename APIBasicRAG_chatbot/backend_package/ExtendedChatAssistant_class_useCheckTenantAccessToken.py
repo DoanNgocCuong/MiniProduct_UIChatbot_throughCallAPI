@@ -19,22 +19,18 @@ import config  # Now we can import config from the parent directory
 # Import ChatAssistant from class 1
 # Assuming your class 1 code is saved in 'chat_assistant.py'
 from ChatAssistant_class import ChatAssistant  # Adjust the import path as needed
+from createRecord_checkTenantAccessToken import create_record_with_checkTenantAccessToken
 
 class ExtendedChatAssistant(ChatAssistant):
     """
     An extended version of ChatAssistant that includes conversation management and logging to Lark Base.
     """
 
-    def __init__(self, api_url, api_key, lark_app_token, lark_table_id, lark_bearer_token):
+    def __init__(self, api_url, api_key, lark_app_token, lark_table_id):
         super().__init__(api_url, api_key)
         self.current_conversation_id = None
         self.lark_app_token = lark_app_token
         self.lark_table_id = lark_table_id
-        self.lark_bearer_token = lark_bearer_token
-        self.lark_url = (
-            f"https://open.larksuite.com/open-apis/bitable/v1/apps/"
-            f"{self.lark_app_token}/tables/{self.lark_table_id}/records"
-        )
 
     def start_new_conversation(self):
         """
@@ -61,13 +57,13 @@ class ExtendedChatAssistant(ChatAssistant):
 
     def _log_to_larkbase(self, user_input, assistant_response):
         """
-        Log the chat interaction to Lark Base.
+        Log the chat interaction to Lark Base using create_record_with_checkTenantAccessToken.
 
         Args:
             user_input (str): The user's input question.
             assistant_response (str): The assistant's response.
         """
-        payload = {
+        fields = {
             "fields": {
                 "system_prompt": (
                     "You are a friendly and helpful assistant for CSKH-StepUpEducation. "
@@ -78,24 +74,16 @@ class ExtendedChatAssistant(ChatAssistant):
                 ),
                 "conversation_id": self.current_conversation_id,
                 "chat_id": str(uuid.uuid4()),
-                "timestamp": datetime.datetime.utcnow().isoformat(),
+                "timestamp": datetime.datetime.now(datetime.UTC).isoformat(),
                 "user_input": user_input,
                 "assistant_response": assistant_response,
             }
         }
 
-        headers = {
-            'Authorization': f'Bearer {self.lark_bearer_token}',
-            'Content-Type': 'application/json',
-        }
-
         try:
-            response = requests.post(
-                self.lark_url, headers=headers, data=json.dumps(payload)
-            )
-            response.raise_for_status()
+            create_record_with_checkTenantAccessToken(self.lark_app_token, self.lark_table_id, fields)
             print("Log entry inserted successfully")
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
             print(f"An error occurred while logging to Lark Base: {e}")
 
 # Example usage
@@ -105,11 +93,11 @@ if __name__ == "__main__":
     API_KEY = os.getenv('API_KEY')
     LARK_APP_TOKEN = config.APP_BASE_TOKEN
     LARK_TABLE_ID = config.BASE_TABLE_ID
-    LARK_BEARER_TOKEN = os.getenv('LARK_BEARER_TOKEN')
+    LARK_BEARER_ACCESS_TOKEN = os.getenv('LARK_BEARER_ACCESS_TOKEN')
 
     if not API_URL or not API_KEY:
         print("Error: API_URL or API_KEY not found in environment variables")
-    elif not LARK_APP_TOKEN or not LARK_TABLE_ID or not LARK_BEARER_TOKEN:
+    elif not LARK_APP_TOKEN or not LARK_TABLE_ID:
         print("Error: Lark configurations not found in environment variables")
     else:
         assistant = ExtendedChatAssistant(
@@ -117,7 +105,6 @@ if __name__ == "__main__":
             API_KEY,
             LARK_APP_TOKEN,
             LARK_TABLE_ID,
-            LARK_BEARER_TOKEN,
         )
         while True:
             prompt = input(
