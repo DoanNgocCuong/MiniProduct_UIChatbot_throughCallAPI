@@ -1,15 +1,19 @@
 import requests
 import json
-from .get_tenantAccessToken_funct import get_tenant_access_token
-    
-# Import config
-# Add the parent directory to sys.path để import được config.py
 import os
 import sys
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
+
+# Add the parent directory to sys.path để import được config.py
+file_path = os.path.abspath(__file__) # Đường dẫn tuyệt đối đến file hiện tại
+current_dir = os.path.dirname(file_path) # Đường dẫn đến thư mục hiện tại: APIBasicRAG_chatbot/backend_package
+parent_dir = os.path.dirname(current_dir) # Đường dẫn đến thư mục cha của thư mục hiện tại: APIBasicRAG_chatbot
+sys.path.append(parent_dir) # Thêm đường dẫn đến thư mục cha vào sys.path
 import config  # Now we can import config from the parent directory 
+
+# Import các module từ backend_package sau
+from backend_package.get_tenantAccessToken_funct import get_tenant_access_token
+from backend_package.createRecord_tenantAccessToken_funct import create_record
+
 app_base_token = config.APP_BASE_TOKEN  # Your app_token
 base_table_id = config.BASE_TABLE_ID  # Your table_id
 
@@ -24,23 +28,6 @@ fields_json = {
     }
 }
 
-def create_record(app_base_token, base_table_id, tenant_access_token, fields_json):
-    url = f"https://open.larksuite.com/open-apis/bitable/v1/apps/{app_base_token}/tables/{base_table_id}/records"
-    payload = json.dumps(fields_json)
-
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {tenant_access_token}'
-    }
-
-    # Add this line to disable SSL certificate verification
-    requests.packages.urllib3.disable_warnings()
-    response = requests.request("POST", url, headers=headers, data=payload, verify=False)
-    
-    # Log response status and text for debugging
-    print(f"Response status code: {response.status_code}")
-    print(f"Response json: {response.json()}")
-    return response
 
 def create_record_with_checkTenantAccessToken(app_base_token, base_table_id, fields_json):
 

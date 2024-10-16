@@ -5,9 +5,11 @@ import json
 # Add the parent directory to sys.path để import được config.py
 import os
 import sys
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
+
+file_path = os.path.abspath(__file__) # Đường dẫn tuyệt đối đến file hiện tại
+current_dir = os.path.dirname(file_path) # Đường dẫn đến thư mục hiện tại: APIBasicRAG_chatbot/backend_package
+parent_dir = os.path.dirname(current_dir) # Đường dẫn đến thư mục cha của thư mục hiện tại: APIBasicRAG_chatbot
+sys.path.append(parent_dir) # Thêm đường dẫn đến thư mục cha vào sys.path
 import config  # Now we can import config from the parent directory 
 
 
