@@ -35,7 +35,7 @@ class ChatAssistant:
         self.current_conversation_id = None
         self.lark_app_token = config.APP_BASE_TOKEN
         self.lark_table_id = config.BASE_TABLE_ID
-        self.lark_bearer_token = os.getenv('LARK_BEARER_TOKEN')
+        self.lark_bearer_access_token = os.getenv('LARK_BEARER_ACCESS_TOKEN')
         self.lark_url = f"https://open.larksuite.com/open-apis/bitable/v1/apps/{self.lark_app_token}/tables/{self.lark_table_id}/records"
 
     def start_new_conversation(self):
@@ -162,7 +162,7 @@ class ChatAssistant:
         })
 
         headers = {
-            'Authorization': f'Bearer {self.lark_bearer_token}',
+            'Authorization': f'Bearer {self.lark_bearer_access_token}',
             'Content-Type': 'application/json'
         }
 
