@@ -1,4 +1,4 @@
-
+```
 APIBasicRAG_chatbot/
 │
 ---deploy1---
@@ -26,7 +26,7 @@ APIBasicRAG_chatbot/
 ├── deploy2/main.py                                         # Main file to run the Streamlit app
 ├── deploy2/.env                                            # Environment variables (API_KEY, API_URL, etc.)
 └── deploy2/config.py                                       # Configurations for Lark and other constants
-
+```
 Deploy1: From QA Assistant to Chatbot Friendly with Memory
 Deploy2: Log conversation history to Larkbase
 
