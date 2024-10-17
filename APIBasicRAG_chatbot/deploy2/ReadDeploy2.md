@@ -74,3 +74,9 @@ Docker không tự động đọc file .env trừ khi bạn chỉ định rõ r�
 ```bash
 docker run --env-file .env -p 8501:8501 apibasicrag-chatbot
 ```
+
+
+chú ý : 
+1. THAY .env và config.py 
+2. SET UP ĐÚNG CÁC TRƯỜNG DỮ LIỆU TRONG BASE:
+- Cụ thể bài này sẽ toàn là text gồm các cột: chat_id, conversation_id, system_prompt, user_input, assistant_response
