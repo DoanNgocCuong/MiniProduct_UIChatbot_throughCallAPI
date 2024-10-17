@@ -31,4 +31,46 @@ streamlit run main.py
 2. Truy vào vào `venv` bằng run Terminal: `.venv/Scripts/activate`
 3. Install requirements.txt sử dụng `pip install -r requirements.txt`
 4. Run test thử 1 số hàm độc lập xem còn hoạt động không, nhất là hàm backend chính `Threading_ExtendedChatAssistant`
-5. `cd` vào `APIBasicRAG_chatbot`, sau đó `streamlit run main.py`
+5. `cd` vào `APIBasicRAG_chatbot`, cd vào `deploy2` sau đó `streamlit run main.py`
+
+------------------------------
+First, make sure Docker Desktop is installed and running on your Windows machine.
+
+1. Create a Dockerfile in your project root:
+
+```dockerfile
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Make port 8501 available to the world outside this container
+EXPOSE 8501
+
+# Run app.py when the container launches
+CMD ["streamlit", "run", "main.py"]
+```
+
+2. Build the Docker image:
+
+```bash
+docker build -t apibasicrag-chatbot .
+```
+
+3. Run the Docker container:
+
+```bash
+docker run -p 8501:8501 apibasicrag-chatbot
+```
+
+Docker không tự động đọc file .env trừ khi bạn chỉ định rõ ràng. Bạn cần phải sử dụng file .env khi chạy Docker container. Sửa đổi lệnh chạy Docker container để nó sử dụng file .env:
+```bash
+docker run --env-file .env -p 8501:8501 apibasicrag-chatbot
+```
